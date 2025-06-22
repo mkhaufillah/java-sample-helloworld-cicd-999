@@ -19,12 +19,12 @@ pipeline {
                     if (!javaVersion.contains('21')) {
                         echo "Java 21 not found. Installing..."
                         sh '''
-                            sudo apt update
-                            sudo apt install -y wget gnupg
-                            wget -O- https://apt.corretto.aws/corretto.key | sudo apt-key add -
-                            echo 'deb https://apt.corretto.aws stable main' | sudo tee /etc/apt/sources.list.d/corretto.list
-                            sudo apt update
-                            sudo apt install -y java-21-amazon-corretto-jdk
+                            apt update
+                            apt install -y wget gnupg
+                            wget -O- https://apt.corretto.aws/corretto.key | apt-key add -
+                            echo 'deb https://apt.corretto.aws stable main' | tee /etc/apt/sources.list.d/corretto.list
+                            apt update
+                            apt install -y java-21-amazon-corretto-jdk
                         '''
                     } else {
                         echo "Java 21 is already installed."
@@ -35,8 +35,8 @@ pipeline {
                     if (!mvnVersion.contains('Apache Maven')) {
                         echo "Maven not found. Installing..."
                         sh '''
-                            sudo apt update
-                            sudo apt install -y maven
+                            apt update
+                            apt install -y maven
                         '''
                     } else {
                         echo "Maven is already installed."
@@ -47,12 +47,12 @@ pipeline {
                     if (chromeCheck == '') {
                         echo "Chrome not found. Installing..."
                         sh '''
-                            sudo apt update
-                            sudo apt install -y wget gnupg2
-                            wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-                            echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
-                            sudo apt update
-                            sudo apt install -y google-chrome-stable
+                            apt update
+                            apt install -y wget gnupg2
+                            wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add -
+                            echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | tee /etc/apt/sources.list.d/google-chrome.list
+                            apt update
+                            apt install -y google-chrome-stable
                         '''
                     } else {
                         echo "Chrome is already installed."
@@ -84,6 +84,7 @@ pipeline {
                         git clone ${env.TEST_REPO}
                         cd automation-cicd-999
                         git checkout main
+                        mvn install -DskipTests
                         mvn test -DsuiteXml=src/test/resources/selenium_page_factory/runner_regresion_cucumber.xml -Denv=${params.ENVIRONMENT}
                     """
                 }
